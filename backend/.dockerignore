@@ -1,0 +1,25 @@
+# Keep the build context (and image) lean, and never let secrets or local-only
+# state into the container.
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Secrets and local config
+.env
+.env.example
+
+# Not needed at runtime
+tests/
+scripts/
+*.log
+
+# Runtime / generated data (created on startup). Keep data/samples and
+# data/cache/aoi_probe, which are the archive source imagery.
+data/sessions/
+data/archive/
+data/review/
+data/models/

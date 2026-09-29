@@ -1,0 +1,36 @@
+# syntax=docker/dockerfile:1
+# SatQuery ARC backend - Vercel container service.
+#
+# Named Dockerfile.vercel and wired in vercel.json (services.backend.runtime =
+# "container", entrypoint = "Dockerfile.vercel"). Running the backend as a
+# container - rather than a Python serverless function - is what lets the
+# geospatial stack (rasterio/GDAL), the writable data directory, and the startup
+# archive build all work unchanged.
+FROM python:3.12-slim
+
+# libgomp1 is needed at runtime by the scientific wheels (scipy, scikit-image,
+# numpy BLAS). rasterio and pyproj bundle their own GDAL/PROJ in the manylinux
+# wheels, so no system GDAL install is required.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+# Dependencies first, so this layer is cached across application code changes.
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Application code and the committed archive source imagery (samples + AOI
+# probes). Runtime directories (sessions, archive, review) are created on
+# startup by the app; the container filesystem is writable.
+COPY app ./app
+COPY data ./data
+
+# Vercel routes container traffic to port 80 by default; PORT overrides it.
+EXPOSE 80
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-80}"]

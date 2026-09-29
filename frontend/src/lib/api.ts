@@ -37,7 +37,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     });
   } catch (cause) {
     throw new ApiError(
-      `Cannot reach the SatQuery backend at ${BASE}${path}. Is uvicorn running?`,
+      `Cannot reach the SatQuery backend at ${BASE}${path}. Is the backend running?`,
       0,
       cause,
     );

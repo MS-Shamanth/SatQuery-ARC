@@ -23,7 +23,7 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
     });
   } catch (cause) {
     throw new ArcError(
-      `Cannot reach the SatQuery ARC backend at ${BASE}${path}. Is uvicorn running on :8000?`,
+      `Cannot reach the SatQuery ARC backend at ${BASE}${path}. Is the backend running?`,
       0,
     );
   }

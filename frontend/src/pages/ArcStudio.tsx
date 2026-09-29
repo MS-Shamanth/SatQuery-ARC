@@ -62,7 +62,7 @@ function OfflinePill() {
       className="flex items-center gap-2 rounded-full border border-edge bg-hull/70 px-3 py-1.5"
       title={
         error
-          ? "The SatQuery ARC backend is not answering on :8000."
+          ? "The SatQuery ARC backend is not answering."
           : "Embedder, change engine and verdict run on this machine. No data leaves the building."
       }
     >
