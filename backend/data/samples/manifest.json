@@ -1,0 +1,494 @@
+{
+  "generated_at": "2026-09-22T17:46:17.566400Z",
+  "scenes": {
+    "water_body": {
+      "key": "water_body",
+      "title": "Ukai reservoir",
+      "description": "A single clear-sky Sentinel-2 scene over the Ukai reservoir on the Tapi. One large, unambiguous water body with a complex shoreline, which makes it a fair test of text-guided grounding.",
+      "demo": "Demo 1 - single-image grounding",
+      "configuration": "single",
+      "suggested_queries": [
+        "Highlight the water body referred to in the query",
+        "Describe the land cover and major objects visible in this image",
+        "How much of this scene is covered by water?"
+      ],
+      "place": "Ukai reservoir, Tapi basin, Gujarat",
+      "assets": {
+        "single": {
+          "role": "single",
+          "filename": "water_body__single.tif",
+          "sha256": "43a26579c78aad02cdb24129065c2dbec3c4394f702728e26c6df9aac250222f",
+          "size_bytes": 2945803,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2B_43QCD_20240112_1_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_43QCD_20240112_1_L2A",
+            "acquisition_date": "2024-01-12T05:53:05.837000Z",
+            "cloud_cover_percent": 0.000309,
+            "platform": "sentinel-2b",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32643,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-21T13:32:57.362605Z"
+          }
+        }
+      },
+      "remedies": [],
+      "corrects": null,
+      "remedy_note": ""
+    },
+    "urban_growth": {
+      "key": "urban_growth",
+      "title": "Dholera greenfield build-out",
+      "description": "Two Sentinel-2 scenes over the Dholera Special Investment Region, both taken in the dry season so phenology cannot explain the difference. Construction here is real and large, which is what makes a SUPPORTED verdict defensible rather than lucky.",
+      "demo": "Demo 2 - claim investigation",
+      "configuration": "bi_temporal_pair",
+      "suggested_queries": [
+        "Has the built-up area increased, decreased, or remained unchanged?",
+        "What changed between these two dates, and where did the change occur?",
+        "Has built-up area increased since 2020?"
+      ],
+      "place": "Dholera Special Investment Region, Gujarat",
+      "assets": {
+        "date_a": {
+          "role": "date_a",
+          "filename": "urban_growth__date_a.tif",
+          "sha256": "bd01ba46bfcf33ba874c9a7f65b137bedef13f4ee4a7dfe0c3b45a24bc63ab1d",
+          "size_bytes": 3361795,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2A_43RFQ_20200214_1_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_43RFQ_20200214_1_L2A",
+            "acquisition_date": "2020-02-14T05:40:16.256000Z",
+            "cloud_cover_percent": 0.527006,
+            "platform": "sentinel-2a",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32643,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-22T17:07:24.019387Z"
+          }
+        },
+        "date_b": {
+          "role": "date_b",
+          "filename": "urban_growth__date_b.tif",
+          "sha256": "cb45ed0609d6c06284d77e228d84b4c0a6bd00a730f7f02a0f97073e47da8b95",
+          "size_bytes": 3375632,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2B_43RFQ_20260207_0_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_43RFQ_20260207_0_L2A",
+            "acquisition_date": "2026-02-07T05:40:17.469000Z",
+            "cloud_cover_percent": 0.001226,
+            "platform": "sentinel-2b",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32643,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-22T17:07:39.544025Z"
+          }
+        }
+      },
+      "remedies": [],
+      "corrects": null,
+      "remedy_note": ""
+    },
+    "flood_urban": {
+      "key": "flood_urban",
+      "title": "Patna monsoon flooding",
+      "description": "Co-registered optical and radar over the Ganga floodplain during the 2019 monsoon flooding. The optical scene is partly cloud-covered, which is exactly the situation SAR exists for, and exactly where the two sensors will disagree.",
+      "demo": "Demo 3 - optical and SAR debate",
+      "configuration": "cross_modal_pair",
+      "suggested_queries": [
+        "Use the optical and SAR images together to identify built-up and water-covered regions",
+        "Find flooded built-up areas",
+        "Where do the optical and radar evidence disagree?"
+      ],
+      "place": "Patna and the Ganga floodplain, Bihar",
+      "assets": {
+        "optical": {
+          "role": "optical",
+          "filename": "flood_urban__optical.tif",
+          "sha256": "012af2243ad3325205a564a0897be558d2e8f6be8d334244c9e517d16f909162",
+          "size_bytes": 3126523,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2A_45RUJ_20191018_1_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_45RUJ_20191018_1_L2A",
+            "acquisition_date": "2019-10-18T05:11:34.480000Z",
+            "cloud_cover_percent": 1.761508,
+            "platform": "sentinel-2a",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32645,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-21T13:34:01.675589Z"
+          }
+        },
+        "sar": {
+          "role": "sar",
+          "filename": "flood_urban__sar.tif",
+          "sha256": "1c1f5fdc8c1eecefa5125691003950d807b2d58c22111eae4bd0f2c4ecd5ea2c",
+          "size_bytes": 2477063,
+          "width": 512,
+          "height": 512,
+          "band_count": 2,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-1-rtc",
+            "stac_item_id": "S1B_IW_GRDH_1SDV_20191018T001114_20191018T001139_018522_022E60_rtc",
+            "stac_url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc/items/S1B_IW_GRDH_1SDV_20191018T001114_20191018T001139_018522_022E60_rtc",
+            "acquisition_date": "2019-10-18T00:11:27.199477Z",
+            "cloud_cover_percent": null,
+            "platform": "SENTINEL-1B",
+            "instrument": "C-SAR",
+            "bands": [
+              "VV",
+              "VH"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32645,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-21T13:34:19.972351Z"
+          }
+        }
+      },
+      "remedies": [],
+      "corrects": null,
+      "remedy_note": ""
+    },
+    "seasonal_farmland": {
+      "key": "seasonal_farmland",
+      "title": "Punjab cropping cycle",
+      "description": "Wheat at peak green in March against the same fields after the April harvest. Vegetation genuinely declines, yet nothing was lost: this is the pair that separates a system which investigates from one which merely answers.",
+      "demo": "Demo 4 - seasonal confounder",
+      "configuration": "bi_temporal_pair",
+      "suggested_queries": [
+        "Did vegetation decrease?",
+        "Has vegetation cover been lost between these two dates?",
+        "Is this scene showing land degradation?"
+      ],
+      "place": "Irrigated cropland north of Moga, Punjab",
+      "assets": {
+        "date_a": {
+          "role": "date_a",
+          "filename": "seasonal_farmland__date_a.tif",
+          "sha256": "dda81eb33dd68376a95d0eac13dc8dcf51e9082437cfe54dda27b16e9a68e4c8",
+          "size_bytes": 3072748,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2B_43REQ_20240312_0_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_43REQ_20240312_0_L2A",
+            "acquisition_date": "2024-03-12T05:50:18.928000Z",
+            "cloud_cover_percent": 0.000299,
+            "platform": "sentinel-2b",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32643,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-21T13:35:01.435810Z"
+          }
+        },
+        "date_b": {
+          "role": "date_b",
+          "filename": "seasonal_farmland__date_b.tif",
+          "sha256": "1cfd6db68a79a9d1f27fa9db65080a8fff79a04b51845701c1a908ff530f8062",
+          "size_bytes": 3103574,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2B_43REQ_20240531_0_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_43REQ_20240531_0_L2A",
+            "acquisition_date": "2024-05-31T05:50:22.726000Z",
+            "cloud_cover_percent": 0.000295,
+            "platform": "sentinel-2b",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32643,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-21T13:35:32.725299Z"
+          }
+        }
+      },
+      "remedies": [],
+      "corrects": null,
+      "remedy_note": ""
+    },
+    "seasonal_farmland_same_season": {
+      "key": "seasonal_farmland_same_season",
+      "title": "Punjab, one year apart in the same season",
+      "description": "The same fields as the seasonal pair, but both acquisitions taken at peak green a year apart. This is the acquisition the system asks for when it refuses the seasonal comparison, and it exists so the refusal can be acted on rather than merely stated.",
+      "demo": "Demo 4 - the corrected comparison",
+      "configuration": "bi_temporal_pair",
+      "suggested_queries": [
+        "Did vegetation decrease?",
+        "Has vegetation cover been lost between these two dates?"
+      ],
+      "place": "Irrigated cropland north of Moga, Punjab",
+      "assets": {
+        "date_a": {
+          "role": "date_a",
+          "filename": "seasonal_farmland_same_season__date_a.tif",
+          "sha256": "dda81eb33dd68376a95d0eac13dc8dcf51e9082437cfe54dda27b16e9a68e4c8",
+          "size_bytes": 3072748,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2B_43REQ_20240312_0_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2B_43REQ_20240312_0_L2A",
+            "acquisition_date": "2024-03-12T05:50:18.928000Z",
+            "cloud_cover_percent": 0.000299,
+            "platform": "sentinel-2b",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32643,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-22T15:00:30.651880Z"
+          }
+        },
+        "date_b": {
+          "role": "date_b",
+          "filename": "seasonal_farmland_same_season__date_b.tif",
+          "sha256": "519eec0ae88a329e3cdc1e4be8b47b62b14c0f1519d42e1733c13e789a037f2e",
+          "size_bytes": 3116192,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2C_43REQ_20250322_0_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2C_43REQ_20250322_0_L2A",
+            "acquisition_date": "2025-03-22T05:50:45.326000Z",
+            "cloud_cover_percent": 0.000395,
+            "platform": "sentinel-2c",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32643,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-22T15:00:50.665777Z"
+          }
+        }
+      },
+      "remedies": [
+        "seasonality"
+      ],
+      "corrects": "seasonal_farmland",
+      "remedy_note": "Both dates sit at the same point in the growing cycle a year apart, so phenology cannot account for a difference between them."
+    },
+    "reservoir_change": {
+      "key": "reservoir_change",
+      "title": "Tungabhadra, two years of storage apart",
+      "description": "The same reservoir photographed in the first week of May six years apart, when storage is at its lowest and an inter-annual difference is real rather than seasonal. MNDWI separates open water from everything else cleanly here, so the area it reports is a measurement rather than a cut through a single population, and a supported verdict is defensible.",
+      "demo": "Demo 2 - claim investigation",
+      "configuration": "bi_temporal_pair",
+      "suggested_queries": [
+        "Has the water spread increased since 2019?",
+        "Did the reservoir's surface water area change between these dates?",
+        "What changed between these two dates, and where did the change occur?"
+      ],
+      "place": "Tungabhadra reservoir, Koppal, Karnataka",
+      "assets": {
+        "date_a": {
+          "role": "date_a",
+          "filename": "reservoir_change__date_a.tif",
+          "sha256": "85bef3a649c1c6e4b491ba9060dc1b55965cac4c329654f29942cef73b52b833",
+          "size_bytes": 2763864,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2A_44QQJ_20200512_1_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_44QQJ_20200512_1_L2A",
+            "acquisition_date": "2020-05-12T05:03:01.652000Z",
+            "cloud_cover_percent": 0.000104,
+            "platform": "sentinel-2a",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32644,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-22T17:46:03.786802Z"
+          }
+        },
+        "date_b": {
+          "role": "date_b",
+          "filename": "reservoir_change__date_b.tif",
+          "sha256": "ce0ea813791a12133e8834e56b770c7c5e0f287ecc203f3b7e88db5e7df4393a",
+          "size_bytes": 2915566,
+          "width": 512,
+          "height": 512,
+          "band_count": 7,
+          "provenance": {
+            "source": "Copernicus Sentinel",
+            "collection": "sentinel-2-l2a",
+            "stac_item_id": "S2A_44QQJ_20240501_0_L2A",
+            "stac_url": "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_44QQJ_20240501_0_L2A",
+            "acquisition_date": "2024-05-01T05:02:59.764000Z",
+            "cloud_cover_percent": 0.000034,
+            "platform": "sentinel-2a",
+            "instrument": "MSI",
+            "bands": [
+              "blue",
+              "green",
+              "red",
+              "nir",
+              "swir16",
+              "swir22",
+              "scl"
+            ],
+            "gsd_m": 10.0,
+            "epsg": 32644,
+            "licence": "Copernicus Sentinel data, free and open under the Copernicus programme",
+            "attribution": "Contains modified Copernicus Sentinel data",
+            "is_simulated": false,
+            "simulation_note": null,
+            "fetched_at": "2026-09-22T17:46:17.519516Z"
+          }
+        }
+      },
+      "remedies": [],
+      "corrects": null,
+      "remedy_note": ""
+    }
+  }
+}

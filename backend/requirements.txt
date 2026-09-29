@@ -1,0 +1,36 @@
+# SatQuery AI backend - exact pins from the verified working install
+# Python 3.12 on Windows. rasterio and scikit-image ship their own GDAL via
+# pip wheels, so no system GDAL installation is required.
+
+# --- Web layer ---
+fastapi==0.141.1
+uvicorn[standard]==0.53.0
+python-multipart==0.0.32
+sse-starlette==3.4.11
+httpx==0.28.1
+
+# --- Configuration and schemas ---
+pydantic==2.13.5
+pydantic-settings==2.15.0
+
+# --- Geospatial compute (the source of every measurement) ---
+numpy==2.5.3
+scipy==1.18.1
+rasterio==1.5.1
+scikit-image==0.26.0
+shapely==2.1.2
+pyproj==3.8.0
+pillow==12.3.0
+
+# --- Data acquisition ---
+pystac-client==0.9.0
+
+# --- Language model: contract generation and narration only ---
+google-genai==2.24.0
+
+# --- Reporting ---
+reportlab==5.0.1
+
+# --- Tests ---
+pytest==9.1.1
+pytest-asyncio==1.4.0

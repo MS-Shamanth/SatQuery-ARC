@@ -1,0 +1,63 @@
+# ===========================================================================
+# SatQuery ARC - repository ignore rules
+# ===========================================================================
+
+# --- Secrets: never commit real credentials (.env.example is the template) ---
+.env
+*.pem
+*.key
+secrets.json
+credentials.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+ENV/
+
+# --- Node / frontend ---
+node_modules/
+frontend/dist/
+dist/
+build/
+*.tsbuildinfo
+.vite/
+
+# --- Editor / OS ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+# Office lock / autosave temp files (e.g. ~$Deck.pptx)
+~$*
+
+# --- Logs ---
+*.log
+
+# ===========================================================================
+# Backend data
+# Keep only the archive SOURCE imagery the offline demo is built from.
+# Everything else under data/ is runtime state (sessions, review queue) or is
+# regenerated on startup (the archive index + thumbnails), so it stays out.
+# ===========================================================================
+backend/data/*
+!backend/data/samples/
+!backend/data/cache/
+backend/data/cache/*
+!backend/data/cache/aoi_probe/
+
+# --- Loose design-reference scratch kept out of the repo root ---
+/ChatGPT Image*.png
+/Screenshot*.png

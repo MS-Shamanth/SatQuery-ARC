@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+/*
+  SatQuery AI design tokens.
+
+  The palette is a dark mission-control scheme. Semantic colours are fixed to
+  pipeline meanings and must stay consistent everywhere they appear:
+    emerald = agreement / PASS / SUPPORTED
+    rose    = disagreement / FAIL / REFUTED
+    amber   = uncertain / WARN / INCONCLUSIVE
+    cyan    = primary interactive + measured values
+    violet  = language-model narration (never a source of numbers)
+*/
+@theme {
+  /* Surfaces, darkest to lightest */
+  --color-void: #04070e;
+  --color-abyss: #070c16;
+  --color-hull: #0b1220;
+  --color-panel: #101a2d;
+  --color-panel-hi: #16233c;
+  --color-edge: #1d2b45;
+  --color-edge-hi: #2c4062;
+
+  /* Text */
+  --color-ink: #e9effc;
+  --color-ink-dim: #9aabc9;
+  --color-ink-faint: #64769a;
+
+  /* Semantic accents */
+  --color-signal: #22d3ee;
+  --color-signal-dim: #0e7490;
+  --color-agree: #34d399;
+  --color-disagree: #fb7185;
+  --color-uncertain: #fbbf24;
+  --color-narrate: #a78bfa;
+
+  /* Fonts */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-drift: drift 120s linear infinite;
+  --animate-sweep: sweep 4s var(--ease-out-expo) infinite;
+  /* The orbit tokens are gone: the hero's platforms are driven by SVG
+     animateMotion along the same path that is stroked as their track, because a
+     CSS rotation traces a circle and the tracks are flattened ellipses. Keeping
+     unused tokens around invites someone to reach for them and reintroduce it. */
+  --animate-pulse-ring: pulse-ring 2.4s ease-out infinite;
+  --animate-scanline: scanline 8s linear infinite;
+  --animate-blink: blink 1.4s steps(2, start) infinite;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.7;
+  }
+  80% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes blink {
+  to {
+    opacity: 0.25;
+  }
+}
+
+/* The return-visit tour offer, sliding up from the bottom edge. */
+@keyframes tour-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-void);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Numbers are instrument readouts, so they get the monospace face. */
+  .tabular {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Respect a user's reduced-motion preference: decorative animation stops,
+     but nothing functional is hidden. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Glass panel: the base surface for every card in the app. */
+  .panel {
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in oklab, var(--color-panel) 92%, transparent),
+        color-mix(in oklab, var(--color-hull) 96%, transparent)
+      );
+    border: 1px solid var(--color-edge);
+    border-radius: 14px;
+    backdrop-filter: blur(12px);
+  }
+
+  .panel-raised {
+    box-shadow:
+      0 1px 0 0 color-mix(in oklab, white 6%, transparent) inset,
+      0 18px 50px -24px rgb(0 0 0 / 0.9);
+  }
+
+  /* Fine grain overlay, keeps large dark areas from looking flat. */
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .hairline {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-edge-hi),
+      transparent
+    );
+    height: 1px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Leaflet, restyled for the dark workspace.
+
+   Leaflet ships a light theme with white controls and a white attribution bar,
+   which on this surface reads as a bug. Only presentation is changed; the
+   attribution stays visible because the context imagery requires it.
+   --------------------------------------------------------------------------- */
+
+.leaflet-container {
+  background: var(--color-abyss);
+  font-family: inherit;
+  /* Nearest-neighbour keeps a mask edge crisp instead of smearing a decision
+     boundary across neighbouring pixels while zoomed in. */
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.leaflet-container .leaflet-control-zoom a {
+  background: color-mix(in oklab, var(--color-panel) 92%, transparent);
+  border-color: var(--color-edge);
+  color: var(--color-ink-dim);
+}
+
+.leaflet-container .leaflet-control-zoom a:hover {
+  background: var(--color-panel-hi);
+  color: var(--color-ink);
+}
+
+.leaflet-container .leaflet-control-attribution {
+  background: color-mix(in oklab, var(--color-void) 78%, transparent);
+  color: var(--color-ink-faint);
+  font-size: 9px;
+}
+
+.leaflet-container .leaflet-control-attribution a {
+  color: var(--color-ink-dim);
+}
+
+.satquery-tooltip,
+.leaflet-tooltip.satquery-tooltip {
+  background: color-mix(in oklab, var(--color-panel) 95%, transparent);
+  border: 1px solid var(--color-edge-hi);
+  border-radius: 6px;
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  box-shadow: none;
+}
+
+.leaflet-tooltip.satquery-tooltip::before {
+  display: none;
+}
