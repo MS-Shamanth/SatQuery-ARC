@@ -216,7 +216,7 @@ export function ArcStudio() {
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-void text-ink">
       {/* ---------------------------------------------------------------- Header */}
-      <header className="flex shrink-0 items-center gap-3 border-b border-edge bg-void/90 px-3 py-2.5 backdrop-blur sm:gap-4 sm:px-4">
+      <header className="relative z-50 flex shrink-0 items-center gap-3 border-b border-edge bg-void/90 px-3 py-2.5 backdrop-blur sm:gap-4 sm:px-4">
         <Link to="/" aria-label="Back to the landing page" className="shrink-0">
           <Wordmark compact />
         </Link>
