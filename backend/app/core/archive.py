@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -108,6 +109,8 @@ class ArchiveIndex:
 
 _index: ArchiveIndex | None = None
 _lock = threading.Lock()
+# Serialises load/build so concurrent first requests do not each rebuild.
+_build_lock = threading.Lock()
 
 
 # ---------------------------------------------------------------------------
@@ -168,11 +171,39 @@ def _discover() -> list[tuple[str, str, Path, dict[str, str]]]:
 # ---------------------------------------------------------------------------
 
 
+def _read_roots() -> list[Path]:
+    """Where a built index may live: the bundled dir first, then the runtime dir.
+
+    A deployment image ships a prebuilt index in the bundled dir. If it does not
+    (or the bake failed), the index is built at startup into the runtime dir,
+    which is the only writable place on a read-only image.
+    """
+    settings = get_settings()
+    roots = [settings.archive_dir]
+    runtime = settings.runtime_dir / "archive"
+    if runtime not in roots:
+        roots.append(runtime)
+    return roots
+
+
+def _write_root() -> Path:
+    """The first archive root that can actually be written to."""
+    for root in _read_roots():
+        try:
+            root.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            continue
+        if os.access(root, os.W_OK):
+            return root
+    raise OSError("No writable location for the archive index.")
+
+
 def build_archive(force: bool = True) -> ArchiveStats:
     """Scan the source imagery into the archive index and render thumbnails."""
     settings = get_settings()
     settings.ensure_dirs()
-    thumbs_dir = settings.archive_dir / "thumbs"
+    root = _write_root()
+    thumbs_dir = root / "thumbs"
     thumbs_dir.mkdir(parents=True, exist_ok=True)
 
     tiles: dict[str, ArchiveTile] = {}
@@ -289,7 +320,7 @@ def build_archive(force: bool = True) -> ArchiveStats:
     )
 
     index = ArchiveIndex(tiles=tiles, aois=aois, sources=sources, stats=stats)
-    _persist(index)
+    _persist(index, root)
     global _index
     with _lock:
         _index = index
@@ -300,59 +331,77 @@ def build_archive(force: bool = True) -> ArchiveStats:
     return stats
 
 
-def _persist(index: ArchiveIndex) -> None:
-    settings = get_settings()
+def _persist(index: ArchiveIndex, root: Path) -> None:
     payload = {
         "stats": index.stats.model_dump(),
         "tiles": [t.model_dump() for t in index.tiles.values()],
         "aois": [a.model_dump() for a in index.aois.values()],
         "sources": {k: str(v) for k, v in index.sources.items()},
     }
-    path = settings.archive_dir / INDEX_NAME
-    path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    path = root / INDEX_NAME
+    try:
+        path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    except OSError as exc:
+        # The in-memory index still serves this process; only reuse is lost.
+        logger.warning("archive index not persisted (%s)", exc)
 
 
 def _load_from_disk() -> ArchiveIndex | None:
-    settings = get_settings()
-    path = settings.archive_dir / INDEX_NAME
-    if not path.exists():
-        return None
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        tiles = {t["tile_id"]: ArchiveTile.model_validate(t) for t in payload["tiles"]}
-        aois = {a["aoi_key"]: ArchiveAOI.model_validate(a) for a in payload["aois"]}
-        sources = {k: Path(v) for k, v in payload.get("sources", {}).items()}
-        stats = ArchiveStats.model_validate(payload["stats"])
-        return ArchiveIndex(tiles=tiles, aois=aois, sources=sources, stats=stats)
-    except Exception as exc:  # noqa: BLE001
-        logger.warning("archive index unreadable (%s); will rebuild", exc)
-        return None
+    for root in _read_roots():
+        path = root / INDEX_NAME
+        if not path.exists():
+            continue
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            tiles = {t["tile_id"]: ArchiveTile.model_validate(t) for t in payload["tiles"]}
+            aois = {a["aoi_key"]: ArchiveAOI.model_validate(a) for a in payload["aois"]}
+            sources = {k: Path(v) for k, v in payload.get("sources", {}).items()}
+            stats = ArchiveStats.model_validate(payload["stats"])
+            # An index built on another machine names source files that do not
+            # exist here; rebuilding is the only way to get usable paths.
+            if sources and not all(p.exists() for p in sources.values()):
+                logger.warning("archive index at %s points at missing files; rebuilding", root)
+                continue
+            return ArchiveIndex(tiles=tiles, aois=aois, sources=sources, stats=stats)
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("archive index at %s unreadable (%s); will rebuild", root, exc)
+    return None
 
 
 def get_index(rebuild: bool = False) -> ArchiveIndex:
-    """The process-wide archive index, built on first use if needed."""
+    """The process-wide archive index, built on first use if needed.
+
+    Loading or building happens under one lock, so the startup warm-up and the
+    first request share a single build instead of each scanning the archive.
+    """
     global _index
     with _lock:
         if _index is not None and not rebuild:
             return _index
-    if not rebuild:
-        loaded = _load_from_disk()
-        if loaded is not None:
-            with _lock:
-                _index = loaded
-            return loaded
-    build_archive(force=rebuild)
-    with _lock:
-        assert _index is not None
-        return _index
+    with _build_lock:
+        with _lock:
+            if _index is not None and not rebuild:
+                return _index
+        if not rebuild:
+            loaded = _load_from_disk()
+            if loaded is not None:
+                with _lock:
+                    _index = loaded
+                return loaded
+        build_archive(force=rebuild)
+        with _lock:
+            assert _index is not None
+            return _index
 
 
 def thumbnail_path(tile_id: str) -> Path | None:
-    settings = get_settings()
     # tile_id is validated by the route; still guard against traversal.
     safe = "".join(c for c in tile_id if c.isalnum() or c in "_-")
-    candidate = settings.archive_dir / "thumbs" / f"{safe}.png"
-    return candidate if candidate.exists() else None
+    for root in _read_roots():
+        candidate = root / "thumbs" / f"{safe}.png"
+        if candidate.exists():
+            return candidate
+    return None
 
 
 __all__ = ["ArchiveIndex", "build_archive", "get_index", "thumbnail_path"]

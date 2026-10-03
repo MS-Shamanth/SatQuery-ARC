@@ -28,15 +28,27 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
+# The rasterio wheel links against the system libexpat, which the slim base
+# image does not ship. Without it `import rasterio` fails and the deployed
+# function crashes on its first request (FUNCTION_INVOCATION_FAILED).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libexpat1 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Application code and the committed archive source imagery (samples + AOI
 # probes).
 COPY app ./app
 COPY data ./data
 
+# Smoke test: import the whole app here, so a missing system library fails the
+# build instead of crashing the deployed function at runtime.
+RUN python -c "import app.main; print('app import ok')"
+
 # Bake the searchable archive (index + thumbnails) into the image, so a cold
-# start only reads it. Scanning every GeoTIFF on startup would be slow, and on a
-# read-only filesystem there is nowhere next to the imagery to write the result.
-RUN python -c "from app.core.archive import build_archive; s = build_archive(True); print(f'archive baked: {s.tile_count} tiles, {s.aoi_count} AOIs, {s.pair_count} pairs')"
+# start only reads it. Best effort: if this step fails, the deploy still goes
+# ahead and the backend builds the archive into /tmp at startup instead.
+RUN python -c "from app.core.archive import build_archive; s = build_archive(True); print(f'archive baked: {s.tile_count} tiles, {s.aoi_count} AOIs, {s.pair_count} pairs')" \
+    || echo "WARNING: archive bake failed; it will be built at startup instead"
 
 # Everything written at runtime (sessions, review queue, contract cache) goes to
 # /tmp, the writable location in a serverless container.
