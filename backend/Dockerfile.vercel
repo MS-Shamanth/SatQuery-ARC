@@ -4,8 +4,11 @@
 # Named Dockerfile.vercel and wired in vercel.json (services.backend.runtime =
 # "container", entrypoint = "Dockerfile.vercel"). Running the backend as a
 # container - rather than a Python serverless function - is what lets the
-# geospatial stack (rasterio/GDAL), the writable data directory, and the startup
-# archive build all work unchanged.
+# geospatial stack (rasterio/GDAL) work unchanged.
+#
+# The image filesystem is treated as read-only at runtime, as it is on Vercel:
+# the archive index is baked in at build time, and every runtime write goes to
+# /tmp (SATQUERY_RUNTIME_DIR below).
 FROM python:3.12-slim
 
 # libgomp1 is needed at runtime by the scientific wheels (scipy, scikit-image,
@@ -26,10 +29,18 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Application code and the committed archive source imagery (samples + AOI
-# probes). Runtime directories (sessions, archive, review) are created on
-# startup by the app; the container filesystem is writable.
+# probes).
 COPY app ./app
 COPY data ./data
+
+# Bake the searchable archive (index + thumbnails) into the image, so a cold
+# start only reads it. Scanning every GeoTIFF on startup would be slow, and on a
+# read-only filesystem there is nowhere next to the imagery to write the result.
+RUN python -c "from app.core.archive import build_archive; s = build_archive(True); print(f'archive baked: {s.tile_count} tiles, {s.aoi_count} AOIs, {s.pair_count} pairs')"
+
+# Everything written at runtime (sessions, review queue, contract cache) goes to
+# /tmp, the writable location in a serverless container.
+ENV SATQUERY_RUNTIME_DIR=/tmp/satquery
 
 # Vercel routes container traffic to port 80 by default; PORT overrides it.
 EXPOSE 80

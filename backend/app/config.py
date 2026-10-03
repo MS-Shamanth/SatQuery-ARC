@@ -223,6 +223,12 @@ class Settings(BaseSettings):
         ]
     )
     force_offline_contract: bool = False
+    # Where runtime state is written: sessions, the review queue and the contract
+    # cache. Empty means the bundled data directory, which is right for local
+    # development and the test suite. A deployment image whose filesystem is
+    # read-only (Vercel) points this at a writable location such as /tmp/satquery,
+    # so nothing is ever written next to the bundled imagery.
+    satquery_runtime_dir: str = ""
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -238,8 +244,14 @@ class Settings(BaseSettings):
         return DATA_DIR
 
     @property
+    def runtime_dir(self) -> Path:
+        """Writable root for runtime state (see ``satquery_runtime_dir``)."""
+        override = self.satquery_runtime_dir.strip()
+        return Path(override) if override else DATA_DIR
+
+    @property
     def sessions_dir(self) -> Path:
-        return DATA_DIR / "sessions"
+        return self.runtime_dir / "sessions"
 
     @property
     def samples_dir(self) -> Path:
@@ -261,7 +273,12 @@ class Settings(BaseSettings):
     @property
     def review_dir(self) -> Path:
         """Where the analyst review queue and audit log are persisted."""
-        return DATA_DIR / "review"
+        return self.runtime_dir / "review"
+
+    @property
+    def contract_cache_dir(self) -> Path:
+        """Cached analysis contracts. Written at runtime, so under the runtime dir."""
+        return self.runtime_dir / "cache" / "contracts"
 
     # --- Credential presence (never exposes the value itself) ---
     @property
@@ -335,17 +352,32 @@ class Settings(BaseSettings):
         return bool(self.aws_access_key_id.strip() and self.aws_secret_access_key.strip())
 
     def ensure_dirs(self) -> None:
-        """Create the runtime directories if they do not yet exist."""
+        """Create the data directories if they do not yet exist.
+
+        The writable runtime directories must exist, so a failure there is real
+        and is raised. The bundled asset directories ship with the source tree or
+        the image; on a read-only filesystem they cannot be created, and an absent
+        optional one (no trained model, say) must not take startup down with it.
+        """
+        for path in (
+            self.runtime_dir,
+            self.sessions_dir,
+            self.review_dir,
+            self.contract_cache_dir,
+        ):
+            path.mkdir(parents=True, exist_ok=True)
         for path in (
             self.data_dir,
-            self.sessions_dir,
             self.samples_dir,
             self.models_dir,
             self.cache_dir,
             self.archive_dir,
-            self.review_dir,
         ):
-            path.mkdir(parents=True, exist_ok=True)
+            try:
+                path.mkdir(parents=True, exist_ok=True)
+            except OSError:
+                # Read-only image filesystem: bundled directories ship with it.
+                continue
 
 
 @lru_cache(maxsize=1)

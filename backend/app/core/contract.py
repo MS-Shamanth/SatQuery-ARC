@@ -1492,7 +1492,7 @@ class ContractCache:
 
 
 def get_cache() -> ContractCache:
-    return ContractCache(get_settings().cache_dir / "contracts")
+    return ContractCache(get_settings().contract_cache_dir)
 
 
 # ---------------------------------------------------------------------------
