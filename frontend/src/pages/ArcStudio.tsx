@@ -118,7 +118,7 @@ export function ArcStudio() {
   const [queryText, setQueryText] = useState(FEATURED_QUERY);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
-  const { run, response, busy: searching } = search;
+  const { run, response, busy: searching, error: searchError } = search;
   const { verify, verification, busy: verifying, error: verifyError, aoiKey: verifyingKey } = verif;
   const { state: reviewState, refresh: refreshReview, decide } = review;
 
@@ -289,6 +289,7 @@ export function ArcStudio() {
           <SearchResultsPanel
             response={response}
             busy={searching}
+            error={searchError}
             selectedKey={selectedKey}
             verifyingKey={verifying ? verifyingKey : null}
             onSelect={onSelectResult}

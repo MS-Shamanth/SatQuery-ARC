@@ -45,12 +45,15 @@ function tagClass(kind: string): string {
 export function SearchResultsPanel({
   response,
   busy,
+  error = null,
   selectedKey,
   verifyingKey,
   onSelect,
 }: {
   response: SearchResponse | null;
   busy: boolean;
+  /** A failed search, shown in place of results so a backend fault is visible. */
+  error?: string | null;
   selectedKey: string | null;
   verifyingKey: string | null;
   onSelect: (r: SearchResult) => void;
@@ -127,7 +130,12 @@ export function SearchResultsPanel({
             No sites matched. Try a broader query or clear the filters.
           </li>
         )}
-        {!response && !busy && (
+        {error && !busy && (
+          <li role="alert" className="px-4 py-8 text-center text-[11px] leading-relaxed text-disagree">
+            Search failed: {error}
+          </li>
+        )}
+        {!response && !busy && !error && (
           <li className="px-4 py-8 text-center text-[11px] text-ink-faint">
             Search the archive to see results.
           </li>
